@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>MNIST Recognizer Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 24px;
+        background: #f7f7f8;
+        color: #111;
+      }
+
+      h1 {
+        margin-top: 0;
+        font-size: 24px;
+      }
+
+      .wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-width: 420px;
+      }
+
+      canvas {
+        border: 2px solid #222;
+        background: white;
+        touch-action: none;
+        image-rendering: pixelated;
+        border-radius: 8px;
+      }
+
+      .row {
+        display: flex;
+        gap: 8px;
+      }
+
+      button {
+        padding: 10px 14px;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .result {
+        padding: 12px;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      }
+
+      .hint {
+        color: #555;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>MNIST Recognizer Demo</h1>
+      <p class="hint">Draw a digit from 1 to 9, then click Recognize.</p>
+
+      <canvas id="draw" width="280" height="280"></canvas>
+
+      <div class="row">
+        <button id="recognizeBtn">Recognize</button>
+        <button id="clearBtn">Clear</button>
+      </div>
+
+      <div class="result" id="result">No prediction yet.</div>
+    </div>
+
+    <script type="module">
+      import { recognizeDigit } from './index.js'
+
+      const canvas = document.getElementById('draw')
+      const ctx = canvas.getContext('2d')
+      const result = document.getElementById('result')
+      const recognizeBtn = document.getElementById('recognizeBtn')
+      const clearBtn = document.getElementById('clearBtn')
+
+      function resetCanvas() {
+        ctx.fillStyle = 'white'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+      }
+
+      resetCanvas()
+
+      ctx.strokeStyle = 'black'
+      ctx.lineWidth = 18
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
+
+      let drawing = false
+      let lastX = 0
+      let lastY = 0
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect()
+        // Convert client coordinates to canvas coordinates, accounting for
+        // CSS scaling and device pixel ratio so the drawn stroke matches the
+        // visual cursor position.
+        const clientX = (e.touches && e.touches.length > 0)
+          ? e.touches[0].clientX
+          : e.clientX
+        const clientY = (e.touches && e.touches.length > 0)
+          ? e.touches[0].clientY
+          : e.clientY
+
+        // rect.width/height are the CSS display size; canvas.width/height are
+        // the drawing buffer size. Scale coordinates accordingly.
+        const scaleX = canvas.width / rect.width
+        const scaleY = canvas.height / rect.height
+
+        return {
+          x: (clientX - rect.left) * scaleX,
+          y: (clientY - rect.top) * scaleY
+        }
+      }
+
+      function startDraw(e) {
+        e.preventDefault()
+        const p = getPos(e)
+        drawing = true
+        lastX = p.x
+        lastY = p.y
+
+        ctx.beginPath()
+        ctx.moveTo(lastX, lastY)
+        ctx.lineTo(lastX, lastY)
+        ctx.stroke()
+      }
+
+      function moveDraw(e) {
+        if (!drawing) return
+        e.preventDefault()
+        const p = getPos(e)
+
+        ctx.beginPath()
+        ctx.moveTo(lastX, lastY)
+        ctx.lineTo(p.x, p.y)
+        ctx.stroke()
+
+        lastX = p.x
+        lastY = p.y
+      }
+
+      function endDraw() {
+        drawing = false
+      }
+
+      canvas.addEventListener('mousedown', startDraw)
+      canvas.addEventListener('mousemove', moveDraw)
+      window.addEventListener('mouseup', endDraw)
+
+      canvas.addEventListener('touchstart', startDraw, { passive: false })
+      canvas.addEventListener('touchmove', moveDraw, { passive: false })
+      window.addEventListener('touchend', endDraw)
+
+      clearBtn.addEventListener('click', () => {
+        resetCanvas()
+        result.textContent = 'No prediction yet.'
+      })
+
+      recognizeBtn.addEventListener('click', async () => {
+        result.textContent = 'Recognizing...'
+
+        try {
+          const prediction = await recognizeDigit(canvas)
+          if (!prediction) {
+            result.textContent = 'No digit recognized.'
+            return
+          }
+
+          result.textContent =
+            `Digit: ${prediction.digit} — Confidence: ${(prediction.confidence * 100).toFixed(1)}%`
+        } catch (err) {
+          console.error(err)
+          result.textContent = 'Recognition failed. See console.'
+        }
+      })
+    </script>
+  </body>
+</html>

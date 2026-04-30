@@ -1,0 +1,30 @@
+{
+  "name": "browser-handwritten-number-recognition",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "types": "./index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "weights.js",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "scripts": {
+    "download-model": "wget -nc https://github.com/onnx/models/raw/refs/heads/main/validated/vision/classification/mnist/model/mnist-8.onnx",
+    "extract-weights": "node scripts/extract-weights.js",
+    "serve": "serve ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "onnx-proto": "^8.0.1"
+  },
+  "devDependencies": {
+    "serve": "^14.2.6"
+  }
+}
