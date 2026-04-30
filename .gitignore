@@ -1,3 +1,4 @@
 node_modules
 *.onnx
 weights.js
+demo

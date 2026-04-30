@@ -1,11 +1,11 @@
-# Browser Handwritten Number Recognition
+# Browser Handwritten Digit Recognition
 
 A small library powered by MNIST ONNX model which runs an digit recognizer in the browser.
 
 ## Install
 
 ```bash
-npm install browser-handwritten-number-recognition
+npm install browser-handwritten-digit-recognition
 ```
 
 ## Usage
@@ -15,7 +15,7 @@ npm install browser-handwritten-number-recognition
 ```
 
 ```javascript
-import { recognizeDigit } from 'browser-handwritten-number-recognition'
+import { recognizeDigit } from 'browser-handwritten-digit-recognition'
 const canvas = document.getElementById('draw')
 const prediction = await recognizeDigit(canvas)
 if (prediction) {

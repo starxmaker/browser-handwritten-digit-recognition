@@ -1,5 +1,5 @@
 {
-  "name": "browser-handwritten-number-recognition",
+  "name": "browser-handwritten-digit-recognition",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,7 +15,9 @@
   "scripts": {
     "download-model": "wget -nc https://github.com/onnx/models/raw/refs/heads/main/validated/vision/classification/mnist/model/mnist-8.onnx",
     "extract-weights": "node scripts/extract-weights.js",
-    "serve": "serve ."
+    "prebuild-demo": "npm run download-model && npm run extract-weights && mkdir -p demo",
+    "build-demo": "cp index.html demo/index.html && cp index.js demo/index.js && cp weights.js demo/weights.js",
+    "serve-demo": "serve demo"
   },
   "keywords": [],
   "author": "",

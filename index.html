@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>MNIST Recognizer Demo</title>
+    <title>Handwritten Digit Recognizer Demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
       body {
@@ -58,9 +58,9 @@
   </head>
   <body>
     <div class="wrap">
-      <h1>MNIST Recognizer Demo</h1>
+      <h1>Handwritten Digit Recognizer Demo</h1>
       <p class="hint">Draw a digit from 1 to 9, then click Recognize.</p>
-
+      <div>Powered by <a href="https://huggingface.co/onnxmodelzoo/mnist-8">MNIST-8 ONNX</a></div>
       <canvas id="draw" width="280" height="280"></canvas>
 
       <div class="row">
@@ -69,6 +69,7 @@
       </div>
 
       <div class="result" id="result">No prediction yet.</div>
+      
     </div>
 
     <script type="module">
