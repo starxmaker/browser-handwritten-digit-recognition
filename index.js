@@ -191,7 +191,7 @@ function preprocessCanvas(srcCanvas) {
 }
 
 /**
- * Recognize a handwritten Sudoku digit (1-9) from a canvas.
+ * Recognize a handwritten digit (0-9) from a canvas.
  * Returns null if the canvas is blank or confidence is too low.
  * First call dynamically loads the weights (~60KB bundled chunk).
  */
@@ -221,8 +221,9 @@ export async function recognizeDigit(canvas) {
   }
 
   const probs = softmax(logits)
-  let best = 1
-  for (let i = 2; i <= 9; i++) {
+  // Consider all classes 0..9 when selecting the best prediction.
+  let best = 0
+  for (let i = 1; i <= 9; i++) {
     if (probs[i] > probs[best]) best = i
   }
 
